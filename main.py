@@ -1,10 +1,26 @@
 import requests
+from datetime import datetime, timedelta
 
 
-url = 'https://api.hh.ru/vacancies?text=python%20OR%20javascript%20OR%20typescript%20OR%20java%20OR%20c%23&area=1&date_from=2025-03-12'
+def fetch_api_hh():
+    date_from = (datetime.today() - timedelta(days=30)).strftime('%Y-%m-%d')
+    languages = "python OR javascript OR typescript OR java OR c#"
+    payload = {
+        'text': languages,
+        'area': 1,
+        'date_from': date_from
+    }
 
-response = requests.get(url)
-response.raise_for_status()
+    url = 'https://api.hh.ru/vacancies'
 
-data = response.json()
-print(data)
+    # Выполняем GET-запрос с параметрами
+    response = requests.get(url, params=payload)
+    response.raise_for_status()
+
+    data = response.json()
+    print(data)
+
+
+# Пример вызова функции
+if __name__ == "__main__":
+    fetch_api_hh()
