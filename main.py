@@ -13,14 +13,19 @@ def fetch_api_hh():
 
     url = 'https://api.hh.ru/vacancies'
 
-    # Выполняем GET-запрос с параметрами
     response = requests.get(url, params=payload)
     response.raise_for_status()
 
     data = response.json()
-    print(data)
+    return data['items']
 
 
-# Пример вызова функции
 if __name__ == "__main__":
-    fetch_api_hh()
+    all_vacancies = fetch_api_hh()
+
+    count_vacancies = dict()
+    for vacancy in all_vacancies:
+        count_vacancies[vacancy['name']] = count_vacancies.get(vacancy['name'], 0) + 1
+
+    for name, count in count_vacancies.items():
+        print(f'{name}: {count}')
