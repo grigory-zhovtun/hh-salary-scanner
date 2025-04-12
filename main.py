@@ -27,5 +27,8 @@ if __name__ == "__main__":
     for vacancy in all_vacancies:
         count_vacancies[vacancy['name']] = count_vacancies.get(vacancy['name'], 0) + 1
 
-    for name, count in count_vacancies.items():
-        print(f'{name}: {count}')
+    # for name, count in count_vacancies.items():
+    #     print(f'{name}: {count}')
+
+    for vacancy in all_vacancies:
+        print(vacancy['salary'])
