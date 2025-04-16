@@ -38,7 +38,7 @@ def fetch_api_hh(languages, page):
     response.raise_for_status()
 
     data = response.json()
-    return data['items']
+    return data['items'], data['pages']
 
 
 def grouped_vacancies_data(vacancies):
@@ -97,14 +97,20 @@ def main():
     )
     parser.add_argument(
         "--search",
-        type=str,
-        default=languages)
+        nargs='+',
+        default=languages.split(),
+        )
 
     args = parser.parse_args()
+    query = " ".join(args.search)
 
     all_vacancies = []
-    for page in range(0, 20):
-        all_vacancies.extend(fetch_api_hh(args.search, page))
+    page = 0
+    pages = 1
+    while page < pages:
+        vacancies, pages = fetch_api_hh(query, page)
+        page += 1
+        all_vacancies.extend(vacancies)
     print(grouped_vacancies_data(all_vacancies))
     # grouped_vacancies_data(all_vacancies)
 
