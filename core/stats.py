@@ -4,7 +4,7 @@ def grouped_vacancies_data(vacancies: dict[str, list[dict]],
         lang: {
             "vacancies_found": 0,
             "vacancies_processed": 0,
-            "average_salary": 0.0,
+            "average_salary": 0,
         }
         for lang in languages
     }
@@ -15,8 +15,9 @@ def grouped_vacancies_data(vacancies: dict[str, list[dict]],
 
         stats[lang]["vacancies_found"] = len(lang_vacs)
         stats[lang]["vacancies_processed"] = len(salaries)
-        stats[lang]["average_salary"] = round(
-            sum(salaries) / len(salaries) if salaries else 0.0
-        , 0)
+        stats[lang]["average_salary"] = (
+            int(sum(salaries) / len(salaries))
+            if salaries else 0
+        )
 
     return stats

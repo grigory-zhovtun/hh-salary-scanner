@@ -15,7 +15,7 @@ def main():
     languages = ["Python", "JavaScript", "Typescript", "Java", "C#"]
 
     parser = argparse.ArgumentParser(description="fetch information from HH and SJ vacancies")
-    parser.add_argument("--search", nargs="+", default=" OR ".join(languages))
+    parser.add_argument("--search", nargs="+", default=languages)
     args = parser.parse_args()
     query = " ".join(args.search) if isinstance(args.search, list) else args.search
 
