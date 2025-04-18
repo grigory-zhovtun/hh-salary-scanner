@@ -6,6 +6,7 @@ import argparse
 import re
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from terminaltables import AsciiTable
 
 
 def predict_rub_salary(vacancy):
@@ -166,6 +167,28 @@ def format_sj_vacancies(raw, predict_salary_fn):
     return formatted
 
 
+def terminal_print(data, title):
+    headers = [
+        [
+            "Язык программирования",
+            "Вакансий найдено",
+            "Вакансий обработано",
+            "Средняя зарплата",
+        ]
+    ]
+    for language in data:
+        headers.append(
+            [
+                language,
+                data[language]["vacancies_found"],
+                data[language]["vacancies_processed"],
+                data[language]["average_salary"],
+            ]
+        )
+    table_instance = AsciiTable(headers, title)
+    print(table_instance.table)
+
+
 def main():
     load_dotenv()
 
@@ -178,11 +201,13 @@ def main():
 
     hh_vacancies_raw = fetch_api_hh(query)
     hh_vacancies = format_hh_vacancies(hh_vacancies_raw, predict_rub_salary)
-    print(grouped_vacancies_data(hh_vacancies, languages))
+    hh_stats = grouped_vacancies_data(hh_vacancies, languages)
+    terminal_print(hh_stats, "HeadHunter Moscow")
 
     sj_secret_key = os.environ["SJ_SECRET_KEY"]
     sj_vacancies = format_sj_vacancies(fetch_sj_vacancies(sj_secret_key, languages), predict_rub_salary)
-    print(grouped_vacancies_data(sj_vacancies, languages))
+    sj_stats = grouped_vacancies_data(sj_vacancies, languages)
+    terminal_print(sj_stats, "SuperJob Moscow")
 
 if __name__ == "__main__":
     main()
