@@ -34,66 +34,44 @@ def predict_rub_salary(vacancy):
     return None
 
 
-def fetch_api_hh(query, max_pages=None, per_page=100):
+def fetch_api_hh(languages, max_pages=None, per_page=100):
     date_from = (datetime.today() - timedelta(days=30)).strftime("%Y-%m-%d")
-    items = []
+    raw = {lang: [] for lang in languages}
 
-    for page in itertools.count():
-        if max_pages and page >= max_pages:
-            break
-
-        params = {
-            "text": query,
-            "area": 1,
-            "per_page": per_page,
-            "page": page,
-            "date_from": date_from,
-        }
-        resp = requests.get("https://api.hh.ru/vacancies", params=params, timeout=10)
-        resp.raise_for_status()
-        data = resp.json()
-
-        items.extend(data["items"])
-        if not page < data["pages"] - 1:
-            break
-
-        time.sleep(0.3)
-
-    return items
+    for lang in languages:
+        for page in itertools.count():
+            if max_pages and page >= max_pages:
+                break
+            params = {
+                "text": lang,
+                "area": 1,
+                "per_page": per_page,
+                "page": page,
+                "date_from": date_from,
+            }
+            resp = requests.get("https://api.hh.ru/vacancies", params=params, timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
+            raw[lang].extend(data["items"])
+            if not data["pages"] or page >= data["pages"] - 1:
+                break
+            time.sleep(0.3)
+    return raw
 
 
-def format_hh_vacancies(vacancies, predict_salary_fn):
-    lang_map = {
-        "python": "Python",
-        "javascript": "JavaScript",
-        "typescript": "Typescript",
-        "java": "Java",
-        "c#": "C#",
-    }
-    pattern = re.compile(r'\b(' + '|'.join(re.escape(k) for k in lang_map) + r')\b', flags=re.IGNORECASE)
-    formatted = {v: [] for v in lang_map.values()}
-
-    for v in vacancies:
-        text = " ".join([
-            v.get("name") or "",
-            v.get("snippet", {}).get("requirement") or "",
-            v.get("snippet", {}).get("responsibility") or "",
-        ])
-        langs = {m.lower() for m in pattern.findall(text)}
-        if not langs:
-            continue
-
-        vacancy_common = {
-            "title": v.get("name"),
-            "city": v.get("area", {}).get("name"),
-            "salary": predict_salary_fn(v),
-            "currency": (v.get("salary") or {}).get("currency"),
-            "published": (v.get("published_at") or "")[:10],
-        }
-
-        for l in langs:
-            formatted[lang_map[l]].append(vacancy_common)
-
+def format_hh_vacancies(raw, predict_salary_fn):
+    formatted = {}
+    for lang, vacs in raw.items():
+        formatted[lang] = [
+            {
+                "title": v.get("name"),
+                "city": v.get("area", {}).get("name"),
+                "salary": predict_salary_fn(v),
+                "currency": (v.get("salary") or {}).get("currency"),
+                "published": (v.get("published_at") or "")[:10],
+            }
+            for v in vacs
+        ]
     return formatted
 
 
@@ -199,8 +177,11 @@ def main():
     args = parser.parse_args()
     query = " ".join(args.search) if isinstance(args.search, list) else args.search
 
-    hh_vacancies_raw = fetch_api_hh(query)
-    hh_vacancies = format_hh_vacancies(hh_vacancies_raw, predict_rub_salary)
+    if query is not None:
+        languages = query.split(" ")
+
+    hh_raw = fetch_api_hh(languages)
+    hh_vacancies = format_hh_vacancies(hh_raw, predict_rub_salary)
     hh_stats = grouped_vacancies_data(hh_vacancies, languages)
     terminal_print(hh_stats, "HeadHunter Moscow")
 
