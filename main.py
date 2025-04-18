@@ -1,7 +1,11 @@
 import requests
+import itertools
+import os
+import time
 import argparse
 import re
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
 
 
 def predict_rub_salary(vacancy):
@@ -90,15 +94,70 @@ def grouped_vacancies_data(vacancies):
     return result
 
 
+def fetch_api_sj(sj_key, languages, max_pages=None, per_page=100):
+    base_url = "https://api.superjob.ru/2.0/vacancies/"
+    headers = {"X-Api-App-Id": sj_key}
+    vacancies, seen_ids = {lang: [] for lang in languages}, set()
+
+    for lang in languages:
+        for page in itertools.count():
+            if max_pages and page >= max_pages:
+                break
+            params = {
+                "keyword": lang,
+                "town": 4,            # Москва
+                "catalogues": 33,     # под‑каталог «Программисты»
+                "period": 30,         # последний месяц
+                "no_correction": 1,   # без автоисправлений
+                "page": page,
+                "count": per_page,
+                "order_field": "date",
+                "order_direction": "desc",
+            }
+            try:
+                resp = requests.get(base_url, params=params, headers=headers, timeout=10)
+                resp.raise_for_status()
+                data = resp.json()
+                for vac in data["objects"]:
+                    if vac["id"] in seen_ids:
+                        continue
+                    seen_ids.add(vac["id"])
+                    vacancies[lang].append(
+                        {
+                            "title": vac["profession"],
+                            "city": vac["town"]["title"],
+                            "salary_from": vac["payment_from"] or None,
+                            "salary_to": vac["payment_to"] or None,
+                            "currency": vac["currency"],
+                            "published": datetime.fromtimestamp(
+                                vac["date_published"]).strftime("%Y‑%m‑%d"),
+                        }
+                    )
+                if not data["more"]:
+                    break
+                time.sleep(0.3)
+            except requests.exceptions.HTTPError:
+                time.sleep(1)
+    return vacancies
+
+
 def main():
-    languages = "python OR javascript OR typescript OR java OR c#"
+    load_dotenv()
+
+    languages = [
+        "Python",
+        "JavaScript",
+        "Typescript",
+        "Java",
+        "C#"
+    ]
     parser = argparse.ArgumentParser(
         description="fetch information from HH vacancies"
     )
     parser.add_argument(
         "--search",
         nargs='+',
-        default=languages.split(),
+        default=" OR ".join(languages),
         )
 
     args = parser.parse_args()
@@ -106,14 +165,17 @@ def main():
 
     all_vacancies = []
     page = 0
-    pages = 1
-    while page < pages:
-        vacancies, pages = fetch_api_hh(query, page)
-        page += 1
-        all_vacancies.extend(vacancies)
-    print(grouped_vacancies_data(all_vacancies))
-    # grouped_vacancies_data(all_vacancies)
+    max_page = 1
+    # while page < max_page:
+    #     vacancies, max_page = fetch_api_hh(query, page)
+    #     page += 1
+    #     all_vacancies.extend(vacancies)
+    # print(grouped_vacancies_data(all_vacancies))
 
+    sj_secret_key = os.environ['SJ_SECRET_KEY']
+
+    for lang, v in fetch_api_sj(sj_secret_key, languages).items():
+        print(lang, v)
 
 if __name__ == "__main__":
     main()
