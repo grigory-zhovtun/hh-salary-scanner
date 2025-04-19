@@ -22,8 +22,8 @@ def main():
     if query is not None:
         languages = query.split(" ")
 
-    hh_raw = fetch_api_hh(languages)
-    hh_vacancies = format_hh_vacancies(hh_raw, predict_rub_salary)
+    raw_hh_vacancies = fetch_api_hh(languages)
+    hh_vacancies = format_hh_vacancies(raw_hh_vacancies, predict_rub_salary)
     hh_stats = grouped_vacancies_data(hh_vacancies, languages)
     terminal_print(hh_stats, "HeadHunter Moscow")
 

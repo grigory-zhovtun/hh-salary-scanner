@@ -1,7 +1,7 @@
 from terminaltables import AsciiTable
 
 
-def terminal_print(data, title):
+def terminal_print(stats_by_language, title):
     headers = [
         [
             "Язык программирования",
@@ -10,13 +10,13 @@ def terminal_print(data, title):
             "Средняя зарплата",
         ]
     ]
-    for language in data:
+    for language in stats_by_language:
         headers.append(
             [
                 language,
-                data[language]["vacancies_found"],
-                data[language]["vacancies_processed"],
-                data[language]["average_salary"],
+                stats_by_language[language]["vacancies_found"],
+                stats_by_language[language]["vacancies_processed"],
+                stats_by_language[language]["average_salary"],
             ]
         )
     table_instance = AsciiTable(headers, title)

@@ -6,7 +6,7 @@ import time
 
 def fetch_api_hh(languages, max_pages=None, per_page=100):
     date_from = (datetime.today() - timedelta(days=30)).strftime("%Y-%m-%d")
-    raw = {lang: [] for lang in languages}
+    vacancies_by_language = {lang: [] for lang in languages}
 
     for lang in languages:
         for page in itertools.count():
@@ -21,18 +21,18 @@ def fetch_api_hh(languages, max_pages=None, per_page=100):
             }
             resp = requests.get("https://api.hh.ru/vacancies", params=params, timeout=10)
             resp.raise_for_status()
-            data = resp.json()
-            raw[lang].extend(data["items"])
-            if not data["pages"] or page >= data["pages"] - 1:
+            vacancy_page = resp.json()
+            vacancies_by_language[lang].extend(vacancy_page["items"])
+            if not vacancy_page["pages"] or page >= vacancy_page["pages"] - 1:
                 break
             time.sleep(0.3)
-    return raw
+    return vacancies_by_language
 
 
-def format_hh_vacancies(raw, predict_salary_fn):
+def format_hh_vacancies(vacancies_by_language, predict_salary_fn):
     formatted = {}
-    for lang, vacs in raw.items():
-        formatted[lang] = [
+    for language, vacancies in vacancies_by_language.items():
+        formatted[language] = [
             {
                 "title": v.get("name"),
                 "city": v.get("area", {}).get("name"),
@@ -40,6 +40,6 @@ def format_hh_vacancies(raw, predict_salary_fn):
                 "currency": (v.get("salary") or {}).get("currency"),
                 "published": (v.get("published_at") or "")[:10],
             }
-            for v in vacs
+            for v in vacancies
         ]
     return formatted
