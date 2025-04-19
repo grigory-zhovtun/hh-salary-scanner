@@ -16,19 +16,17 @@ def main():
     parser = argparse.ArgumentParser(description="fetch information from HH and SJ vacancies")
     parser.add_argument("--search", nargs="+", default=LANGUAGES)
     args = parser.parse_args()
-    query = " ".join(args.search) if isinstance(args.search, list) else args.search
 
-    if query is not None:
-        languages = query.split(" ")
+    languages = args.search if args.search else LANGUAGES
 
-    raw_hh_vacancies = fetch_hh_vacancies(LANGUAGES)
+    raw_hh_vacancies = fetch_hh_vacancies(languages)
     hh_vacancies = format_hh_vacancies(raw_hh_vacancies, predict_rub_salary)
-    hh_stats = grouped_vacancies_data(hh_vacancies, LANGUAGES)
+    hh_stats = grouped_vacancies_data(hh_vacancies, languages)
     terminal_print(hh_stats, "HeadHunter Moscow")
 
     sj_secret_key = os.environ["SJ_SECRET_KEY"]
-    sj_vacancies = format_sj_vacancies(fetch_sj_vacancies(sj_secret_key, LANGUAGES), predict_rub_salary)
-    sj_stats = grouped_vacancies_data(sj_vacancies, LANGUAGES)
+    sj_vacancies = format_sj_vacancies(fetch_sj_vacancies(sj_secret_key, languages), predict_rub_salary)
+    sj_stats = grouped_vacancies_data(sj_vacancies, languages)
     terminal_print(sj_stats, "SuperJob Moscow")
 
 if __name__ == "__main__":
