@@ -28,8 +28,8 @@ This Python project retrieves salary data from HeadHunter (hh.ru) and SuperJob (
 
 1. **Clone the repository or download the scripts**  
    ```bash
-   git clone https://github.com/your_username/your_repo.git
-   cd your_repo
+   git clone https://github.com/grigory-zhovtun/hh-salary-scanner.git
+   cd hh-salary-scanner
    ```
 
 2. **(Optional) Create and activate a virtual environment**  
