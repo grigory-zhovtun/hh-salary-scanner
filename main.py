@@ -2,7 +2,7 @@ import os
 import argparse
 from dotenv import load_dotenv
 
-from core.hh_api import fetch_api_hh, format_hh_vacancies
+from core.hh_api import fetch_hh_vacancies, format_hh_vacancies
 from core.sj_api import fetch_sj_vacancies, format_sj_vacancies
 from core.salary import predict_rub_salary
 from core.stats import grouped_vacancies_data
@@ -22,7 +22,7 @@ def main():
     if query is not None:
         languages = query.split(" ")
 
-    raw_hh_vacancies = fetch_api_hh(languages)
+    raw_hh_vacancies = fetch_hh_vacancies(languages)
     hh_vacancies = format_hh_vacancies(raw_hh_vacancies, predict_rub_salary)
     hh_stats = grouped_vacancies_data(hh_vacancies, languages)
     terminal_print(hh_stats, "HeadHunter Moscow")

@@ -4,7 +4,7 @@ import itertools
 import time
 
 
-def fetch_api_hh(languages, max_pages=None, per_page=100):
+def fetch_hh_vacancies(languages, max_pages=None, per_page=100):
     date_from = (datetime.today() - timedelta(days=30)).strftime("%Y-%m-%d")
     vacancies_by_language = {lang: [] for lang in languages}
 
