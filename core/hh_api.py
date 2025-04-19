@@ -29,22 +29,3 @@ def fetch_hh_vacancies(languages, max_pages=None, per_page=100):
                 break
             time.sleep(0.3)
     return vacancies_by_language
-
-
-def format_hh_vacancies(vacancies_by_language, predict_salary_fn):
-    formatted = {}
-    for language, vacancies_raw in vacancies_by_language.items():
-        found = vacancies_raw["found"]
-        vacancies = vacancies_raw["items"]
-        vacs = [
-            {
-                "title": vacancy.get("name"),
-                "city": vacancy.get("area", {}).get("name"),
-                "salary": predict_salary_fn(vacancy),
-                "currency": (vacancy.get("salary") or {}).get("currency"),
-                "published": (vacancy.get("published_at") or "")[:10],
-            }
-            for vacancy in vacancies
-        ]
-        formatted[language] = {"found": found, "vacancies": vacs}
-    return formatted
