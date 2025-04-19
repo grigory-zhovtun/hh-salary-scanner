@@ -1,15 +1,14 @@
-def grouped_vacancies_data(vacancies: dict[str, list[dict]],
-                           languages: list[str]) -> dict[str, dict]:
+def grouped_vacancies_data(vacancies: dict[str, list[dict]]) -> dict[str, dict]:
     stats = {
         lang: {
             "vacancies_found": 0,
             "vacancies_processed": 0,
             "average_salary": 0,
         }
-        for lang in languages
+        for lang in vacancies
     }
 
-    for lang in languages:
+    for lang in vacancies:
         lang_vacs = vacancies.get(lang, [])
         salaries = [vacancy["salary"] for vacancy in lang_vacs if vacancy["salary"] is not None]
 
