@@ -7,7 +7,7 @@ from .settings import HH_MOSCOW_ID
 
 def fetch_hh_vacancies(languages, max_pages=None, per_page=100):
     date_from = (datetime.today() - timedelta(days=30)).strftime("%Y-%m-%d")
-    vacancies_by_language = {lang: [] for lang in languages}
+    vacancies_by_language = {lang: {"found": 0, "items": []} for lang in languages}
 
     for lang in languages:
         for page in itertools.count():
@@ -23,7 +23,8 @@ def fetch_hh_vacancies(languages, max_pages=None, per_page=100):
             resp = requests.get("https://api.hh.ru/vacancies", params=params, timeout=10)
             resp.raise_for_status()
             vacancy_page = resp.json()
-            vacancies_by_language[lang].extend(vacancy_page["items"])
+            vacancies_by_language[lang]["found"] = vacancy_page.get("found", len(vacancies_by_language[lang]["items"]))
+            vacancies_by_language[lang]["items"].extend(vacancy_page["items"])
             if not vacancy_page["pages"] or page >= vacancy_page["pages"] - 1:
                 break
             time.sleep(0.3)
@@ -32,8 +33,10 @@ def fetch_hh_vacancies(languages, max_pages=None, per_page=100):
 
 def format_hh_vacancies(vacancies_by_language, predict_salary_fn):
     formatted = {}
-    for language, vacancies in vacancies_by_language.items():
-        formatted[language] = [
+    for language, vacancies_raw in vacancies_by_language.items():
+        found = vacancies_raw["found"]
+        vacancies = vacancies_raw["items"]
+        vacs = [
             {
                 "title": vacancy.get("name"),
                 "city": vacancy.get("area", {}).get("name"),
@@ -43,4 +46,5 @@ def format_hh_vacancies(vacancies_by_language, predict_salary_fn):
             }
             for vacancy in vacancies
         ]
+        formatted[language] = {"found": found, "vacancies": vacs}
     return formatted
