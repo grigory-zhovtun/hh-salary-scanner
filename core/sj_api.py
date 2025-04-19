@@ -40,12 +40,12 @@ def format_sj_vacancies(vacancies_by_language, predict_salary_fn):
     for language, vacancies in vacancies_by_language.items():
         formatted[language] = [
             {
-                "title": v["profession"],
-                "city": v["town"]["title"],
-                "salary": predict_salary_fn(v),
-                "currency": v["currency"],
-                "published": datetime.fromtimestamp(v["date_published"]).strftime("%Y-%m-%d"),
+                "title": vacancy["profession"],
+                "city": vacancy["town"]["title"],
+                "salary": predict_salary_fn(vacancy),
+                "currency": vacancy["currency"],
+                "published": datetime.fromtimestamp(vacancy["date_published"]).strftime("%Y-%m-%d"),
             }
-            for v in vacancies
+            for vacancy in vacancies
         ]
     return formatted

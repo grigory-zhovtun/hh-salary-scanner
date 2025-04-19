@@ -11,7 +11,7 @@ def grouped_vacancies_data(vacancies: dict[str, list[dict]],
 
     for lang in languages:
         lang_vacs = vacancies.get(lang, [])
-        salaries = [v["salary"] for v in lang_vacs if v["salary"] is not None]
+        salaries = [vacancy["salary"] for vacancy in lang_vacs if vacancy["salary"] is not None]
 
         stats[lang]["vacancies_found"] = len(lang_vacs)
         stats[lang]["vacancies_processed"] = len(salaries)

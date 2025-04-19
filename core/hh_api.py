@@ -35,12 +35,12 @@ def format_hh_vacancies(vacancies_by_language, predict_salary_fn):
     for language, vacancies in vacancies_by_language.items():
         formatted[language] = [
             {
-                "title": v.get("name"),
-                "city": v.get("area", {}).get("name"),
-                "salary": predict_salary_fn(v),
-                "currency": (v.get("salary") or {}).get("currency"),
-                "published": (v.get("published_at") or "")[:10],
+                "title": vacancy.get("name"),
+                "city": vacancy.get("area", {}).get("name"),
+                "salary": predict_salary_fn(vacancy),
+                "currency": (vacancy.get("salary") or {}).get("currency"),
+                "published": (vacancy.get("published_at") or "")[:10],
             }
-            for v in vacancies
+            for vacancy in vacancies
         ]
     return formatted
