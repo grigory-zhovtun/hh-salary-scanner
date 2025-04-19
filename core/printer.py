@@ -1,7 +1,7 @@
 from terminaltables import AsciiTable
 
 
-def terminal_print(stats_by_language, title):
+def print_statistics_table(stats_by_language, title):
     headers = [
         [
             "Язык программирования",

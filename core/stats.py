@@ -1,4 +1,4 @@
-def grouped_vacancies_data(vacancies) -> dict[str, dict]:
+def calculate_vacancy_statistics(vacancies) -> dict[str, dict]:
     stats = {}
 
     for lang, info in vacancies.items():
