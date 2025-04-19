@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import requests
 import itertools
 import time
+from .settings import HH_MOSCOW_ID
 
 
 def fetch_hh_vacancies(languages, max_pages=None, per_page=100):
@@ -14,7 +15,7 @@ def fetch_hh_vacancies(languages, max_pages=None, per_page=100):
                 break
             params = {
                 "text": lang,
-                "area": 1,
+                "area": HH_MOSCOW_ID,
                 "per_page": per_page,
                 "page": page,
                 "date_from": date_from,

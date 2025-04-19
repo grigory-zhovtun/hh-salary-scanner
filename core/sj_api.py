@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import requests
 import itertools
 import time
+from .settings import SJ_MOSCOW_ID, SJ_IT_PROGRAMMING_ID
 
 
 def fetch_sj_vacancies(sj_key, languages, max_pages=None, per_page=100):
@@ -15,8 +16,8 @@ def fetch_sj_vacancies(sj_key, languages, max_pages=None, per_page=100):
                 break
             params = {
                 "keyword": lang,
-                "town": 4,
-                "catalogues": 33,
+                "town": SJ_MOSCOW_ID,
+                "catalogues": SJ_IT_PROGRAMMING_ID,
                 "period": 30,
                 "no_correction": 1,
                 "page": page,
