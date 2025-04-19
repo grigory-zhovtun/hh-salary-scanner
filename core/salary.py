@@ -16,11 +16,11 @@ def normalize_pay(value):
 
 
 def compute_salary(pay_from, pay_to):
-    if pay_from is not None and pay_to is not None:
+    if pay_from and pay_to:
         return (pay_from + pay_to) / 2
-    if pay_from is not None:
+    if pay_from:
         return pay_from * 1.2
-    if pay_to is not None:
+    if pay_to:
         return pay_to * 0.8
     return None
 
