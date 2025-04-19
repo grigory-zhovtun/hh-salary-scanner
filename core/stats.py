@@ -15,4 +15,11 @@ def calculate_vacancy_statistics(vacancies) -> dict[str, dict]:
             ),
     }
 
-    return stats
+    sorted_stats = dict(
+        sorted(
+            stats.items(),
+            key=lambda item: item[1]["average_salary"],
+            reverse=True
+        )
+    )
+    return sorted_stats
