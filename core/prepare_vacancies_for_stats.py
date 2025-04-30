@@ -1,4 +1,4 @@
-def format_vacancies(vacancies_by_language, predict_salary_fn):
+def prepare_vacancies_for_stats(vacancies_by_language, predict_salary_fn):
     formatted = {}
     for language, vacancies_raw in vacancies_by_language.items():
         found = vacancies_raw.get("found", vacancies_raw.get("total", 0))
