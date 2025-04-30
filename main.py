@@ -20,8 +20,8 @@ def main():
 
     languages = args.search if args.search else LANGUAGES
 
-    raw_hh_vacancies = fetch_hh_vacancies(languages)
-    hh_vacancies = format_vacancies(raw_hh_vacancies, predict_rub_salary)
+    unformatted_hh_vacancies = fetch_hh_vacancies(languages)
+    hh_vacancies = format_vacancies(unformatted_hh_vacancies, predict_rub_salary)
     hh_stats = calculate_vacancy_statistics(hh_vacancies)
     print_statistics_table(hh_stats, "HeadHunter Moscow")
 
