@@ -21,9 +21,9 @@ def fetch_hh_vacancies(languages, max_pages=None, per_page=100):
                 "page": page,
                 "date_from": date_from,
             }
-            resp = requests.get("https://api.hh.ru/vacancies", params=params, timeout=10)
-            resp.raise_for_status()
-            vacancy_page = resp.json()
+            response = requests.get("https://api.hh.ru/vacancies", params=params, timeout=10)
+            response.raise_for_status()
+            vacancy_page = response.json()
 
             lang_stats = vacancies_by_language[lang]
             lang_stats["items"].extend(vacancy_page["items"])
