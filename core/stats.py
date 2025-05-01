@@ -3,8 +3,8 @@ def calculate_vacancy_statistics(vacancies) -> dict[str, dict]:
 
     for lang, info in vacancies.items():
         found = info.get("found")
-        vacs = info.get("vacancies", [])
-        salaries = [v["salary"] for v in vacs if v["salary"] is not None]
+        salaries = info.get("salaries", [])
+        salaries = [salary for salary in salaries if salary is not None]
 
         stats[lang] = {
             "vacancies_found": found,
