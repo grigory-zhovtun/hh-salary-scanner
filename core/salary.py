@@ -1,10 +1,5 @@
-def extract_salary_from_dict(vacancy):
-    salary = vacancy["salary"]
-    return salary.get("from"), salary.get("to"), salary.get("currency")
+from .extractors import extract_salary
 
-
-def extract_salary_from_fields(vacancy):
-    return vacancy.get("payment_from"), vacancy.get("payment_to"), vacancy.get("currency")
 
 
 def is_rub_currency(currency) -> bool:
@@ -26,12 +21,7 @@ def compute_salary(pay_from, pay_to):
 
 
 def predict_rub_salary(vacancy):
-    extractor = (
-        extract_salary_from_dict
-        if isinstance(vacancy.get("salary"), dict)
-        else extract_salary_from_fields
-    )
-    pay_from, pay_to, currency = extractor(vacancy)
+    pay_from, pay_to, currency = extract_salary(vacancy)
 
     pay_from = normalize_pay(pay_from)
     pay_to   = normalize_pay(pay_to)
