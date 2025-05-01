@@ -1,12 +1,12 @@
 def calculate_vacancy_statistics(vacancies) -> dict[str, dict]:
     stats = {}
 
-    for lang, info in vacancies.items():
-        found = info.get("found")
-        salaries = info.get("salaries", [])
+    for language, vacancy_stats in vacancies.items():
+        found = vacancy_stats.get("found")
+        salaries = vacancy_stats.get("salaries", [])
         salaries = [salary for salary in salaries if salary is not None]
 
-        stats[lang] = {
+        stats[language] = {
             "vacancies_found": found,
             "vacancies_processed": len(salaries),
             "average_salary": (
