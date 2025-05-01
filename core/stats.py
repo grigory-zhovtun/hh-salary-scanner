@@ -4,7 +4,7 @@ def calculate_vacancy_statistics(vacancies) -> dict[str, dict]:
     for language, vacancy_stats in vacancies.items():
         found = vacancy_stats.get("found")
         salaries = vacancy_stats.get("salaries", [])
-        salaries = [salary for salary in salaries if salary is not None]
+        salaries = [salary for salary in salaries if salary]
 
         stats[language] = {
             "vacancies_found": found,
