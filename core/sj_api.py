@@ -6,6 +6,10 @@ from collections import defaultdict
 from .settings import SJ_MOSCOW_ID, SJ_IT_PROGRAMMING_ID
 
 
+
+COUNT_DAYS = 30
+
+
 def fetch_sj_vacancies(sj_key, languages, max_pages=None, per_page=100):
     base_url = "https://api.superjob.ru/2.0/vacancies/"
     headers = {"X-Api-App-Id": sj_key}
@@ -19,7 +23,7 @@ def fetch_sj_vacancies(sj_key, languages, max_pages=None, per_page=100):
                 "keyword": lang,
                 "town": SJ_MOSCOW_ID,
                 "catalogues": SJ_IT_PROGRAMMING_ID,
-                "period": 30,
+                "period": COUNT_DAYS,
                 "no_correction": 1,
                 "page": page,
                 "count": per_page,
