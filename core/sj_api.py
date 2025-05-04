@@ -38,4 +38,4 @@ def fetch_sj_vacancies(sj_key, languages, max_pages=None, per_page=100):
                 break
             time.sleep(0.3)
 
-    return dict(vacancies_by_language)
+    return vacancies_by_language
